@@ -10,7 +10,7 @@ cp .env.example .env
 npm run dev
 ```
 
-Configura `VITE_API_URL` con la URL base del backend, por ejemplo `http://localhost:4000`. El dashboard agrega `/api` automáticamente.
+Configura `VITE_API_URL` con la URL base del backend, por ejemplo `https://backendlnestock-production.up.railway.app/api`. El dashboard acepta la URL con o sin `/api` y agrega el sufijo automáticamente cuando es necesario.
 
 Para generar el build de producción: `npm run build`.
 

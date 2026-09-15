@@ -3,8 +3,11 @@ import axios from 'axios'
 export const ACCESS_TOKEN_KEY = 'lne_access_token'
 export const USER_KEY = 'lne_user'
 
+const configuredApiUrl = (import.meta.env.VITE_API_URL || 'https://backendlnestock-production.up.railway.app/api').replace(/\/$/, '')
+const apiBaseUrl = configuredApiUrl.endsWith('/api') ? configuredApiUrl : `${configuredApiUrl}/api`
+
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/api`,
+  baseURL: apiBaseUrl,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 })
