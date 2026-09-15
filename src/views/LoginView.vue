@@ -48,6 +48,9 @@
       <p class="muted">
         Ingresa tus credenciales para continuar.
       </p>
+      <p class="muted">
+        Modo de demostración: puedes usar cualquier correo y contraseña.
+      </p>
       <form @submit.prevent="submit">
         <label>
           Correo electrónico
