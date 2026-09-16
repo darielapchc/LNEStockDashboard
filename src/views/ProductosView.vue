@@ -93,7 +93,7 @@
             </td>
             <td>
               <span class="stock-badge" :class="{ low: product.stock
-                <= 5 }">
+                < 10 }">
                   {{ product.stock }} uds.
                 </span>
               </td>
