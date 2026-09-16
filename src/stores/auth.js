@@ -3,15 +3,6 @@ import { defineStore } from 'pinia'
 import authService from '../services/authService'
 import { ACCESS_TOKEN_KEY, USER_KEY } from '../services/api'
 
-// Acceso local temporal para revisar el panel sin depender del backend.
-const DEMO_MODE = true
-const DEMO_USER = {
-  id: 'demo-admin',
-  fullName: 'Administrador Demo',
-  email: 'admin@lnestock.hn',
-  role: 'admin',
-}
-
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(sessionStorage.getItem(ACCESS_TOKEN_KEY))
   const user = ref(readStoredUser())
@@ -33,16 +24,10 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(credentials) {
     loading.value = true
     try {
-      if (DEMO_MODE) {
-        persist('demo-access-token', {
-          ...DEMO_USER,
-          email: credentials.email || DEMO_USER.email,
-        })
-        return user.value
-      }
-
       const { data } = await authService.login(credentials)
-      persist(data.accessToken, data.user)
+      const accessToken = data?.accessToken || data?.token
+      if (!accessToken || !data?.user) throw new Error('La respuesta de autenticación no es válida.')
+      persist(accessToken, data.user)
       return data.user
     } finally {
       loading.value = false
@@ -54,11 +39,6 @@ export const useAuthStore = defineStore('auth', () => {
     if (initialized.value) return user.value
     loading.value = true
     try {
-      if (DEMO_MODE) {
-        if (!token.value) return null
-        return user.value
-      }
-
       if (token.value) {
         try {
           const { data } = await authService.me()
@@ -69,13 +49,8 @@ export const useAuthStore = defineStore('auth', () => {
         }
       }
 
-      {
-        const { data } = await authService.refresh()
-        persist(data.accessToken, data.user)
-      }
-      const { data } = await authService.me()
-      persist(token.value, data)
-      return data
+      clearSession()
+      return null
     } catch {
       clearSession()
       return null
@@ -93,7 +68,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function logout(callApi = true) {
-    if (callApi && !DEMO_MODE) { try { await authService.logout() } catch { /* la sesión puede haber expirado */ } }
+    if (callApi) { try { await authService.logout() } catch { /* la sesión local se limpia siempre */ } }
     clearSession()
     initialized.value = true
   }

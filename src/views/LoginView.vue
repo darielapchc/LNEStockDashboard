@@ -48,8 +48,8 @@
       <p class="muted">
         Ingresa tus credenciales para continuar.
       </p>
-      <p class="muted">
-        Modo de demostración: puedes usar cualquier correo y contraseña.
+      <p v-if="$route.query.reason === 'admin_required'" class="alert alert-error">
+        Esta cuenta no tiene permisos de administrador.
       </p>
       <form @submit.prevent="submit">
         <label>

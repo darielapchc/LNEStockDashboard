@@ -18,7 +18,7 @@ const router = createRouter({
     {
       path: '/',
       component: DashboardLayout,
-      meta: { auth: true },
+      meta: { auth: true, admin: true },
       children: [
         { path: 'dashboard', component: DashboardView, meta: { title: 'Dashboard' } },
         { path: 'productos', component: ProductosView, meta: { title: 'Productos' } },
@@ -37,6 +37,10 @@ router.beforeEach(async (to) => {
   const auth = useAuthStore()
   if (!auth.initialized) await auth.initialize()
   if (to.meta.auth && !auth.isAuthenticated) return '/login'
+  if (to.meta.admin && auth.user?.role !== 'admin') {
+    await auth.logout(false)
+    return { path: '/login', query: { reason: 'admin_required' } }
+  }
   if (to.meta.guest && auth.isAuthenticated) return '/dashboard'
 })
 

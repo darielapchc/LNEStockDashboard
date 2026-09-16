@@ -11,8 +11,8 @@
       <button class="button button-ghost" @click="$emit('cancel')">
         Cancelar
       </button>
-      <button class="button button-danger" @click="$emit('confirm')">
-        Confirmar
+      <button class="button button-danger" :disabled="busy" @click="$emit('confirm')">
+        {{ busy ? 'Procesando...' : 'Confirmar' }}
       </button>
     </div>
   </div>
@@ -22,7 +22,8 @@
 defineProps({
   open: Boolean,
   title: String,
-  message: String
+  message: String,
+  busy: Boolean
 });
 defineEmits(['cancel', 'confirm']);
 </script>

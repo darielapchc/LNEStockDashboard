@@ -10,7 +10,7 @@ cp .env.example .env
 npm run dev
 ```
 
-Configura `VITE_API_URL` con la URL base del backend, por ejemplo `https://backendlnestock-production.up.railway.app/api`. El dashboard acepta la URL con o sin `/api` y agrega el sufijo automáticamente cuando es necesario.
+Configura `VITE_API_URL` como `https://backendlnestock-production.up.railway.app/api`. El cliente Axios centralizado normaliza una única vez el sufijo `/api` y todos los servicios usan rutas relativas.
 
 Para generar el build de producción: `npm run build`.
 
@@ -22,10 +22,11 @@ El frontend se alinea con `BackendLNEStock` y usa estos endpoints reales:
 - `GET|POST|PUT|DELETE /api/productos` y `GET /api/productos/:id`
 - `GET|POST|PUT|DELETE /api/categorias` y `GET /api/categorias/:id`
 - `GET|POST /api/movimientos`
+- `GET /api/usuarios`, `GET /api/usuarios/:id`, `PATCH /api/usuarios/:id/status`, `PUT /api/usuarios/:id/password`
 
-El login recibe `{ accessToken, user }`. El access token se conserva únicamente durante la sesión en `sessionStorage`; las peticiones protegidas envían `Authorization: Bearer <accessToken>` y la cookie httpOnly de refresh se conserva con `withCredentials`. Si el access token expira, Axios intenta renovarlo automáticamente mediante `/api/auth/refresh`. El stock no se modifica directamente desde el dashboard: las entradas y salidas se envían como `{ tipoMovimiento, cantidad, productoId }`.
+El login recibe el payload real del backend (`accessToken` y `user`; también se admite `token`, igual que Flutter). El access token se conserva durante la sesión en `sessionStorage`; las peticiones protegidas envían `Authorization: Bearer <accessToken>` desde el interceptor centralizado. Un 401 limpia la sesión y redirige al login. El stock no se modifica directamente desde el dashboard: las entradas y salidas se envían como `{ tipoMovimiento, cantidad, productoId }`.
 
-El backend actual no expone usuarios ni estadísticas. La vista de usuarios lo documenta como funcionalidad pendiente; las estadísticas se calculan en presentación a partir de productos y movimientos disponibles, sin datos ficticios. Tampoco existe un endpoint de edición de perfil, por lo que el perfil queda en modo lectura.
+Las estadísticas se calculan en presentación a partir de productos, categorías y movimientos disponibles, sin datos ficticios. El acceso al dashboard requiere un usuario con `role === 'admin'`; las operaciones administrativas continúan protegidas por el backend.
 
 ## Estructura
 

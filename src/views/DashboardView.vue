@@ -23,7 +23,7 @@
     {{ error }}
   </div>
   <LoadingSpinner v-if="loading" text="Sincronizando inventario..." />
-  <template v-else>
+  <template v-else-if="!error">
     <div class="stats-grid">
       <StatCard label="Productos" :value="products.length" hint="en catálogo" :icon="Package" />
       <StatCard label="Categorías" :value="categories.length" hint="activas y registradas" :icon="Tags" />
@@ -93,6 +93,7 @@
       </section>
     </div>
   </template>
+  <section v-else class="card"><EmptyState title="No se pudo cargar el dashboard" message="Revisa la conexión con la API e inténtalo nuevamente." /></section>
 </div>
 </template>
 <script setup>

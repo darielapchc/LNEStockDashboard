@@ -14,13 +14,11 @@
     </div>
   </div>
   <LoadingSpinner v-if="loading" text="Calculando estadísticas..." />
-  <template v-else>
-    <div v-if="error" class="alert alert-error">
-      {{ error }}
-    </div>
+  <template v-else-if="!error">
     <div class="stats-grid">
       <StatCard label="Entradas" :value="summary.in" hint="unidades registradas" :icon="ArrowDownToLine" />
       <StatCard label="Salidas" :value="summary.out" hint="unidades registradas" :icon="ArrowUpFromLine" />
+      <StatCard label="Stock total" :value="summary.stock" hint="unidades disponibles" :icon="Boxes" />
       <StatCard label="Valor del stock" :value="money(summary.value)" hint="precio × stock" :icon="Coins" />
       <StatCard label="Productos con stock bajo" :value="summary.low" hint="5 unidades o menos" :icon="TriangleAlert" />
     </div>
@@ -66,11 +64,12 @@
       </div>
     </section>
   </template>
+  <section v-else class="card"><p class="muted">No se pudieron calcular las estadísticas. Revisa la conexión con la API e inténtalo nuevamente.</p></section>
 </div>
 </template>
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { ArrowDownToLine, ArrowUpFromLine, Coins, TriangleAlert } from 'lucide-vue-next';
+import { ArrowDownToLine, ArrowUpFromLine, Boxes, Coins, TriangleAlert } from 'lucide-vue-next';
 import productoService from '../services/productoService';
 import movimientoService from '../services/movimientoService';
 import { money, errorMessage } from '../utils/formatters';
@@ -84,6 +83,7 @@ const summary = computed(() => ({
   in: movements.value.filter(m => m.tipoMovimiento === 'ENTRADA').reduce((n, m) => n + Number(m.cantidad || 0), 0),
   out: movements.value.filter(m => m.tipoMovimiento === 'SALIDA').reduce((n, m) => n + Number(m.cantidad || 0), 0),
   low: products.value.filter(p => Number(p.stock) <= 5).length,
+  stock: products.value.reduce((n, p) => n + Number(p.stock || 0), 0),
   value: products.value.reduce((n, p) => n + Number(p.stock || 0) * Number(p.precio || 0), 0)
 }));
 const maxMovement = computed(() => Math.max(summary.value.in, summary.value.out, 1));

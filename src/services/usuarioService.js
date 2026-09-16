@@ -1,5 +1,8 @@
-// El backend actual aún no expone rutas de usuarios. Se mantiene este módulo
-// para conectar el recurso cuando el contrato esté disponible.
+import api from './api'
+
 export default {
-  getUsuarios: () => Promise.reject(new Error('El backend no expone /usuarios todavía.')),
+  getUsuarios: () => api.get('/usuarios'),
+  getUsuario: (id) => api.get(`/usuarios/${id}`),
+  updateStatus: (id, isActive) => api.patch(`/usuarios/${id}/status`, { isActive }),
+  resetPassword: (id, password) => api.put(`/usuarios/${id}/password`, { password }),
 }
