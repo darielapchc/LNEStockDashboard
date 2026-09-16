@@ -20,7 +20,7 @@
       <StatCard label="Salidas" :value="summary.out" hint="unidades registradas" :icon="ArrowUpFromLine" />
       <StatCard label="Stock total" :value="summary.stock" hint="unidades disponibles" :icon="Boxes" />
       <StatCard label="Valor del stock" :value="money(summary.value)" hint="precio × stock" :icon="Coins" />
-      <StatCard label="Productos con stock bajo" :value="summary.low" hint="5 unidades o menos" :icon="TriangleAlert" />
+      <StatCard label="Productos con stock bajo" :value="summary.low" hint="Menos de 10 unidades" :icon="TriangleAlert" />
     </div>
     <section class="card chart-card">
       <div class="card-heading">
@@ -82,7 +82,7 @@ const error = ref('');
 const summary = computed(() => ({
   in: movements.value.filter(m => m.tipoMovimiento === 'ENTRADA').reduce((n, m) => n + Number(m.cantidad || 0), 0),
   out: movements.value.filter(m => m.tipoMovimiento === 'SALIDA').reduce((n, m) => n + Number(m.cantidad || 0), 0),
-  low: products.value.filter(p => Number(p.stock) <= 5).length,
+  low: products.value.filter(p => Number(p.stock) < 10).length,
   stock: products.value.reduce((n, p) => n + Number(p.stock || 0), 0),
   value: products.value.reduce((n, p) => n + Number(p.stock || 0) * Number(p.precio || 0), 0)
 }));

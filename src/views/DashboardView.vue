@@ -116,7 +116,7 @@ const loading = ref(true);
 const error = ref('');
 const firstName = computed(() => auth.user?.fullName?.split(' ')[0] || 'administrador');
 const stock = computed(() => products.value.reduce((sum, p) => sum + Number(p.stock || 0), 0));
-const lowStock = computed(() => products.value.filter(p => Number(p.stock) <= 5));
+const lowStock = computed(() => products.value.filter(p => Number(p.stock) < 10));
 onMounted(async () => {
   try {
     const results = await Promise.all([productoService.getProductos(), categoriaService.getCategorias(), movimientoService.getMovimientos()]);
