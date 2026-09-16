@@ -28,7 +28,7 @@
       <StatCard label="Productos" :value="products.length" hint="en catálogo" :icon="Package" />
       <StatCard label="Categorías" :value="categories.length" hint="activas y registradas" :icon="Tags" />
       <StatCard label="Stock total" :value="stock" hint="unidades disponibles" :icon="Boxes" />
-      <StatCard label="Stock bajo" :value="lowStock.length" hint="requieren atención" :icon="TriangleAlert" />
+      <StatCard label="Stock bajo" :value="lowStock.length" hint="Menos de 10 unidades" :icon="TriangleAlert" />
     </div>
     <div class="dashboard-grid">
       <section class="card">
